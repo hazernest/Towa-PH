@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Towa Semiconductor Equipment Philippines</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/towa_logo.png" alt="TOWA Philippines" class="logo">
+        </div>
+        <nav class="nav">
+            <a href="#home">Home</a>
+            <a href="#products">Products</a>
+            <a href="#services">Services</a>
+            <a href="#parts">Parts</a>
+            <a href="#portals">Portals</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="cta-row">
+            <a class="btn ghost" href="#contact">Talk to PH Support</a>
+            <a class="btn" href="#portals">Log In</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Local support for molding and singulation</p>
+                <h1>Request, schedule, and track TOWA services in the Philippines.</h1>
+                <p class="lede">Fast response for molding and singulation equipment: service dispatch, preventive maintenance, upgrades, and critical parts.</p>
+                <div class="hero-ctas">
+                    <a class="btn" href="#contact">Request Service</a>
+                    <a class="btn ghost" href="#parts">Request Parts</a>
+                </div>
+                <div class="metrics">
+                    <div><span class="metric">24/5</span><span class="label">PH support hours</span></div>
+                    <div><span class="metric"><span class="accent">+</span>80%</span><span class="label">overseas sales backed locally</span></div>
+                    <div><span class="metric">FTF</span><span class="label">First-time-fix focused</span></div>
+                </div>
+            </div>
+            <div class="hero-card">
+                <div class="card-title">Priority Request</div>
+                <form class="quick-form" name="priority-request" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="priority-request">
+                    <p class="hidden">
+                        <label>Don’t fill this out if you’re human: <input name="bot-field"></label>
+                    </p>
+                    <label>Need help with</label>
+                    <div class="pill-row">
+                        <button type="button" class="pill active">Service</button>
+                        <button type="button" class="pill">Parts</button>
+                        <button type="button" class="pill">Upgrade</button>
+                    </div>
+                    <label for="model">Model / SN</label>
+                    <input id="model" name="model" placeholder="e.g., Molding | SN 12345">
+                    <label for="location">Site / Region</label>
+                    <input id="location" name="location" placeholder="City, Province">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Describe issue or request"></textarea>
+                    <button class="btn block" type="submit">Submit Request</button>
+                    <p class="fine">We respond within PH business hours. Attachments accepted after submission.</p>
+                </form>
+            </div>
+        </section>
+
+        <section id="products" class="section">
+            <div class="section-header">
+                <p class="eyebrow">Products</p>
+                <h2>Molding and Singulation equipment supported locally</h2>
+                <p class="lede">Aligned with TOWA Japan portfolio, with Philippine lead times, onsite support, and upgrade options.</p>
+            </div>
+            <div class="grid two">
+                <article class="card">
+                    <div class="tag">Molding Equipment</div>
+                    <h3>Compression and transfer molding solutions</h3>
+                    <p>High-throughput, flow-free molding for advanced packages. Local install, PM, and process tuning.</p>
+                    <ul class="bullets">
+                        <li>Install & ramp support</li>
+                        <li>Process and transfer set checks</li>
+                        <li>Tooling and mold set guidance</li>
+                    </ul>
+                    <div class="card-ctas">
+                        <a class="btn" href="#contact">Request Quote</a>
+                        <a class="btn ghost" href="#parts">See Parts</a>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="tag">Singulation Equipment</div>
+                    <h3>High-speed singulation with precision handling</h3>
+                    <p>Blade management, image analysis alignment, and maintenance backed by PH field service engineers.</p>
+                    <ul class="bullets">
+                        <li>Alignment calibration</li>
+                        <li>Blade life optimization</li>
+                        <li>Safety and handling SOPs</li>
+                    </ul>
+                    <div class="card-ctas">
+                        <a class="btn" href="#contact">Request Quote</a>
+                        <a class="btn ghost" href="#services">Book Service</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="services" class="section muted">
+            <div class="section-header">
+                <p class="eyebrow">Services & Support</p>
+                <h2>Install, PM, upgrades, and training for your lines</h2>
+                <p class="lede">Dispatchable field service engineers with checklists aligned to TOWA standards and PH site requirements.</p>
+            </div>
+            <div class="grid three">
+                <article class="card compact">
+                    <h3>Preventive Maintenance</h3>
+                    <p>Scheduled PM with calibrated tools, documented checklists, and parts-on-hand planning.</p>
+                </article>
+                <article class="card compact">
+                    <h3>Upgrades & Retrofits</h3>
+                    <p>Throughput, yield, and safety upgrades coordinated with Japan standards and local validation.</p>
+                </article>
+                <article class="card compact">
+                    <h3>Training</h3>
+                    <p>Operator and maintenance upskilling with site-specific safety and handling SOPs.</p>
+                </article>
+            </div>
+            <div class="bar">
+                <div>
+                    <h3>Need a visit?</h3>
+                    <p class="fine">Tell us your window, access notes, and model/SN—we’ll schedule and confirm.</p>
+                </div>
+                <a class="btn" href="#contact">Book Service</a>
+            </div>
+        </section>
+
+        <section id="parts" class="section">
+            <div class="section-header">
+                <p class="eyebrow">Parts & Upgrades</p>
+                <h2>Critical spares with compatibility and lead times</h2>
+                <p class="lede">Filter by model/SN, attach BOQ or photos, and get PH stock or lead-time confirmation.</p>
+            </div>
+            <div class="grid two">
+                <article class="card">
+                    <h3>Parts inquiry</h3>
+                    <p>Submit required part numbers or upload BOM. We validate compatibility and availability.</p>
+                    <ul class="bullets">
+                        <li>Model/SN compatibility checks</li>
+                        <li>Stock vs lead-time badge</li>
+                        <li>Delivery and on-site install</li>
+                    </ul>
+                    <a class="btn" href="#contact">Request Parts</a>
+                </article>
+                <article class="card">
+                    <h3>Upgrades</h3>
+                    <p>Throughput, process, and safety upgrades aligned with latest TOWA kits.</p>
+                    <ul class="bullets">
+                        <li>Factory-approved kits</li>
+                        <li>On-site validation support</li>
+                        <li>Training and documentation</li>
+                    </ul>
+                    <a class="btn ghost" href="#services">Discuss Upgrade</a>
+                </article>
+            </div>
+        </section>
+
+        <section id="portals" class="section muted">
+            <div class="section-header">
+                <p class="eyebrow">Portals</p>
+                <h2>Dashboards for customers and field teams</h2>
+                <p class="lede">Centralize tickets, schedules, reports, and inventory signals for molding and singulation lines.</p>
+            </div>
+            <div class="grid three">
+                <article class="card compact">
+                    <h3>Customer Portal</h3>
+                    <p>Track tickets, quotes/POs, upcoming visits, machine registry, and reports.</p>
+                </article>
+                <article class="card compact">
+                    <h3>FSE Portal</h3>
+                    <p>My jobs, checklists, photo uploads, sign-off capture, and parts holds.</p>
+                </article>
+                <article class="card compact">
+                    <h3>Admin / Dispatch</h3>
+                    <p>Kanban + calendar, region/skill routing, approvals, KPIs (MTTR, FTF).</p>
+                </article>
+            </div>
+            <div class="bar">
+                <div>
+                    <h3>Need access?</h3>
+                    <p class="fine">We provision customer accounts and staff SSO. Request credentials to get started.</p>
+                </div>
+                <a class="btn" href="#contact">Request Access</a>
+            </div>
+        </section>
+
+        <section id="knowledge" class="section">
+            <div class="section-header">
+                <p class="eyebrow">Knowledge Base</p>
+                <h2>Guides for molding and singulation</h2>
+                <p class="lede">Prep checklists, safety notes, and common fixes tailored to PH sites.</p>
+            </div>
+            <div class="grid two">
+                <article class="card compact">
+                    <h3>Site Prep & Safety</h3>
+                    <p>Access, power, EHS, and handling requirements before we arrive.</p>
+                </article>
+                <article class="card compact">
+                    <h3>Troubleshooting</h3>
+                    <p>Model-specific pointers for molding and singulation to speed triage.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="contact" class="section muted">
+            <div class="section-header">
+                <p class="eyebrow">Contact</p>
+                <h2>Philippines support desk</h2>
+                <p class="lede">Reach us for service, parts, or scheduling. We respond within PH business hours.</p>
+            </div>
+            <div class="grid two">
+                <div class="card">
+                    <h3>Hotline & Messaging</h3>
+                    <p>Phone, WhatsApp/Viber for quick triage.</p>
+                    <ul class="contact-list">
+                        <li><span>Support:</span> +63 (XX) XXXX XXXX</li>
+                        <li><span>Email:</span> support.ph@towa.com (placeholder)</li>
+                        <li><span>Hours:</span> 24/5 PH</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Visit & Coverage</h3>
+                    <p>Regional coverage with dispatch from PH hubs.</p>
+                    <ul class="contact-list">
+                        <li><span>Regions:</span> Luzon, Visayas, Mindanao</li>
+                        <li><span>Office:</span> Towa Semiconductor Equipment Philippines Corporation</li>
+                        <li><span>Address:</span> Add PH office address here</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bar">
+                <div>
+                    <h3>Ready to engage?</h3>
+                    <p class="fine">Tell us your model, site, and requested window. We will confirm with a dispatcher.</p>
+                </div>
+                <a class="btn" href="#home">Start a Request</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-brand">TOWA Philippines</div>
+        <div class="footer-links">
+            <a href="#products">Products</a>
+            <a href="#services">Services</a>
+            <a href="#parts">Parts</a>
+            <a href="#portals">Portals</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div class="footer-note">Aligned with TOWA Japan standards. Local support for molding and singulation.</div>
+    </footer>
+</body>
+
+</html>
