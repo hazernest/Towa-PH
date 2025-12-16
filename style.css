@@ -415,6 +415,10 @@ textarea:focus {
     color: var(--text);
 }
 
+.hidden {
+    display: none;
+}
+
 @media (max-width: 900px) {
     .topbar {
         flex-wrap: wrap;

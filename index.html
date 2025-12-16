@@ -259,6 +259,62 @@
         </div>
         <div class="footer-note">Aligned with TOWA Japan standards. Local support for molding and singulation.</div>
     </footer>
+    <script>
+        // Simple client-side handler: send form data to Netlify Function (Supabase) and show inline message.
+        (function() {
+            const form = document.querySelector('form[name="priority-request"]');
+            if (!form) return;
+
+            const pills = form.querySelectorAll('.pill');
+            let selected = 'Service';
+            pills.forEach((pill) => {
+                pill.addEventListener('click', () => {
+                    pills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    selected = pill.textContent.trim();
+                });
+            });
+
+            const status = document.createElement('p');
+            status.className = 'fine';
+            form.appendChild(status);
+
+            form.addEventListener('submit', async(e) => {
+                e.preventDefault();
+                status.textContent = 'Sending...';
+                const model = form.model.value || '';
+                const location = form.location.value || '';
+                const notes = form.notes.value || '';
+                const type = selected.toLowerCase();
+                try {
+                    const resp = await fetch('/.netlify/functions/create-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            type,
+                            model,
+                            location,
+                            notes
+                        })
+                    });
+                    if (!resp.ok) {
+                        const text = await resp.text();
+                        status.textContent = 'Submit failed: ' + text;
+                        return;
+                    }
+                    status.textContent = 'Request submitted. We will confirm within PH business hours.';
+                    form.reset();
+                    pills.forEach(p => p.classList.remove('active'));
+                    if (pills[0]) pills[0].classList.add('active');
+                    selected = 'Service';
+                } catch (err) {
+                    status.textContent = 'Submit failed. Please retry or email support.';
+                }
+            });
+        })();
+    </script>
 </body>
 
 </html>
