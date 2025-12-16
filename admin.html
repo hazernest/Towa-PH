@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin / Dispatch | Towa PH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/towa_logo.png" alt="TOWA Philippines" class="logo">
+            <span>Admin / Dispatch</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="#board">Board</a>
+            <a href="#approvals">Approvals</a>
+            <a href="#inventory">Inventory</a>
+            <a href="#kpi">KPIs</a>
+        </nav>
+        <div class="cta-row">
+            <a class="btn" href="index.html#portals">Back to Site</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="section" id="board">
+            <div class="section-header">
+                <p class="eyebrow">Dispatch</p>
+                <h2>Kanban board</h2>
+                <p class="lede">Track jobs across New · Scheduled · Enroute · Onsite · Waiting Parts · Done.</p>
+            </div>
+            <div class="grid three">
+                <article class="card compact">
+                    <div class="tag">New</div>
+                    <h3>PM – Molding</h3>
+                    <p>Assign FSE, confirm window.</p>
+                </article>
+                <article class="card compact">
+                    <div class="tag">Scheduled</div>
+                    <h3>Install – Singulation</h3>
+                    <p>10:00 AM · Laguna · FSE: TBD.</p>
+                </article>
+                <article class="card compact">
+                    <div class="tag">Waiting Parts</div>
+                    <h3>Upgrade kit</h3>
+                    <p>ETA +2 days · hold slot.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section muted" id="approvals">
+            <div class="section-header">
+                <p class="eyebrow">Approvals</p>
+                <h2>Quotes, discounts, exceptions</h2>
+                <p class="lede">Approve pricing, schedule overrides, and travel exceptions.</p>
+            </div>
+            <div class="bar">
+                <div>
+                    <h3>Pending approvals</h3>
+                    <p class="fine">3 open items: discount, rush slot, parts override.</p>
+                </div>
+                <a class="btn ghost" href="#">Review</a>
+            </div>
+        </section>
+
+        <section class="section" id="inventory">
+            <div class="section-header">
+                <p class="eyebrow">Inventory</p>
+                <h2>Stock & lead times</h2>
+                <p class="lede">See critical spares, ETAs, and reservations per job.</p>
+            </div>
+            <div class="grid two">
+                <article class="card compact">
+                    <h3>Critical spares</h3>
+                    <p>Blades, filters, sensors, compression kit.</p>
+                    <p class="fine">Low stock alert: filters.</p>
+                </article>
+                <article class="card compact">
+                    <h3>Reservations</h3>
+                    <p>Hold parts tied to scheduled jobs; auto-release after completion.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section muted" id="kpi">
+            <div class="section-header">
+                <p class="eyebrow">KPIs</p>
+                <h2>Ops metrics</h2>
+                <p class="lede">Monitor MTTR, first-time-fix, backlog, and SLA compliance.</p>
+            </div>
+            <div class="grid two">
+                <article class="card compact">
+                    <h3>MTTR / SLA</h3>
+                    <p>MTTR: 6.2h · SLA hit: 95%</p>
+                </article>
+                <article class="card compact">
+                    <h3>Backlog</h3>
+                    <p>New: 4 · Waiting Parts: 2 · Scheduled: 5</p>
+                </article>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
