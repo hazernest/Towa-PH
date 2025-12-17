@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal | Towa PH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/towa_logo.png" alt="TOWA Philippines" class="logo">
+            <span>Customer Portal</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="#tickets">My Tickets</a>
+            <a href="index.html#contact">Support</a>
+        </nav>
+        <div class="cta-row">
+            <a class="btn" href="index.html#home">New Request</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="section" id="tickets">
+            <div class="section-header">
+                <p class="eyebrow">Portal</p>
+                <h2>My Requests</h2>
+                <p class="lede">Sign in to see your tickets, statuses, and details.</p>
+            </div>
+
+            <div class="bar">
+                <div>
+                    <h3>Signed-in status</h3>
+                    <p id="signin-status" class="fine">Not signed in</p>
+                </div>
+                <div id="google-login-small">
+                    <div id="google-btn-portal"></div>
+                </div>
+            </div>
+
+            <div class="grid two" id="tickets-list" style="margin-top:18px">
+                <!-- Tickets will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-brand">TOWA Philippines</div>
+    </footer>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        // Minimal portal client: sign-in status and fetch tickets
+        const GOOGLE_CLIENT_ID = "935621579909-farrcjojrdoglnjekf8o6v1n1mth2kju.apps.googleusercontent.com";
+
+        function decodeJwt(token) {
+            try {
+                const payload = token.split('.')[1];
+                return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function renderTicket(t) {
+            const el = document.createElement('article');
+            el.className = 'card';
+            el.innerHTML = `<div class="tag">${(t.type||'request').toUpperCase()}</div>
+                <h3>${t.model || '—'}</h3>
+                <p class="fine">${t.location || '—'}</p>
+                <p>${t.notes || ''}</p>
+                <p class="fine">${new Date(t.created_at || Date.now()).toLocaleString()}</p>`;
+            return el;
+        }
+
+        async function loadTickets() {
+            const list = document.getElementById('tickets-list');
+            list.innerHTML = '';
+            try {
+                const resp = await fetch('/.netlify/functions/get-tickets');
+                if (!resp.ok) {
+                    list.innerHTML = '<div class="card">Unable to load tickets.</div>';
+                    return;
+                }
+                const json = await resp.json();
+                const data = json.data || [];
+                if (!data.length) {
+                    list.innerHTML = '<div class="card">No tickets found.</div>';
+                    return;
+                }
+                data.forEach(t => list.appendChild(renderTicket(t)));
+            } catch (e) {
+                list.innerHTML = '<div class="card">Error loading tickets.</div>';
+            }
+        }
+
+        function handleCredentialResponse(response) {
+            const claims = decodeJwt(response.credential || '');
+            const email = claims.email || claims.sub || 'Google user';
+            document.getElementById('signin-status').textContent = `Signed in as ${email}`;
+            localStorage.setItem('google_id_token', response.credential || '');
+            loadTickets();
+        }
+
+        window.addEventListener('load', () => {
+            const existing = localStorage.getItem('google_id_token');
+            if (existing) {
+                const claims = decodeJwt(existing);
+                const email = claims.email || claims.sub || 'Google user';
+                document.getElementById('signin-status').textContent = `Signed in as ${email}`;
+            }
+
+            if (window.google && GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.startsWith('YOUR_GOOGLE')) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse
+                });
+                google.accounts.id.renderButton(document.getElementById('google-btn-portal'), { theme: 'outline', size: 'medium' });
+                google.accounts.id.prompt();
+            }
+
+            loadTickets();
+        });
+    </script>
+</body>
+
+</html>
