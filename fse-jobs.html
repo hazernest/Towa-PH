@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>FSE Jobs | Towa PH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand"><img src="assets/towa_logo.png" class="logo" alt="TOWA Philippines"> <span>Jobs</span></div>
+        <nav class="nav">
+            <a href="fse.html">FSE Portal</a>
+            <a href="fse-reports.html">Reports</a>
+            <a href="fse-attendance.html">Attendance</a>
+        </nav>
+        <div class="cta-row"><a class="btn ghost" href="fse.html">Back</a></div>
+    </header>
+
+    <main>
+        <section class="section">
+            <div class="section-header">
+                <p class="eyebrow">Jobs</p>
+                <h2>Manage Jobs</h2>
+                <p class="lede">Create, edit, update status, and mark jobs Finished. Finished jobs become read-only.</p>
+            </div>
+
+            <div class="card">
+                <form id="add-job-form" class="quick-form">
+                    <label for="title">Title</label>
+                    <input id="title" required>
+                    <label for="model">Model / SN</label>
+                    <input id="model">
+                    <label for="location">Site / ETA</label>
+                    <input id="location">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3"></textarea>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <button class="btn" type="submit">Add Job</button>
+                        <button id="clear-all-jobs" class="btn ghost" type="button">Clear All</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Jobs List</h3>
+                <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center">
+                    <label class="small">Filter:</label>
+                    <select id="filter-status">
+            <option value="all">All</option>
+            <option value="queued">Queued</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="enroute">Enroute</option>
+            <option value="onsite">Onsite</option>
+            <option value="waiting parts">Waiting Parts</option>
+            <option value="finished">Finished</option>
+          </select>
+                </div>
+                <div id="jobs-container" class="job-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function loadJobs() {
+            try {
+                return JSON.parse(localStorage.getItem('fse_jobs') || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+
+        function saveJobs(j) {
+            localStorage.setItem('fse_jobs', JSON.stringify(j))
+        }
+
+        const STATUS = ['queued', 'scheduled', 'enroute', 'onsite', 'waiting parts', 'finished'];
+
+        function renderJobs(filter = 'all') {
+            const container = document.getElementById('jobs-container');
+            container.innerHTML = '';
+            const jobs = loadJobs();
+            const list = jobs.filter(j => filter === 'all' ? true : (j.status || 'queued') === filter);
+            if (list.length === 0) {
+                container.innerHTML = '<div class="small">No jobs.</div>';
+                return
+            }
+            list.forEach((job, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'job-card';
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                const s = job.status || 'queued';
+                meta.innerHTML = `<strong>${job.title}</strong><div class="small">${job.model||''} · ${job.location||''}</div><div class="small">Created: ${new Date(job.created||0).toLocaleString()}</div>`;
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+
+                // status select
+                const select = document.createElement('select');
+                STATUS.forEach(st => {
+                    const opt = document.createElement('option');
+                    opt.value = st;
+                    opt.textContent = st[0].toUpperCase() + st.slice(1);
+                    if (st === s) opt.selected = true;
+                    select.appendChild(opt);
+                });
+                if (s === 'finished') select.disabled = true;
+
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'btn';
+                saveBtn.textContent = 'Save';
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn ghost';
+                delBtn.textContent = 'Delete';
+                const finishBtn = document.createElement('button');
+                finishBtn.className = 'btn';
+                finishBtn.textContent = 'Mark Finished';
+
+                saveBtn.addEventListener('click', () => {
+                    const i = jobs.findIndex(j => j.created === job.created && j.title === job.title);
+                    if (i < 0) return;
+                    jobs[i].status = select.value;
+                    saveJobs(jobs);
+                    renderJobs(filter);
+                });
+
+                delBtn.addEventListener('click', () => {
+                    if (!confirm('Delete this job?')) return;
+                    const i = jobs.findIndex(j => j.created === job.created && j.title === job.title);
+                    if (i < 0) return;
+                    jobs.splice(i, 1);
+                    saveJobs(jobs);
+                    renderJobs(filter);
+                });
+
+                finishBtn.addEventListener('click', () => {
+                    const i = jobs.findIndex(j => j.created === job.created && j.title === job.title);
+                    if (i < 0) return;
+                    jobs[i].status = 'finished';
+                    saveJobs(jobs);
+                    renderJobs(filter);
+                });
+
+                // disable finish if already finished
+                if (s === 'finished') {
+                    finishBtn.disabled = true;
+                    finishBtn.classList.add('btn', 'ghost');
+                }
+
+                actions.appendChild(select);
+                actions.appendChild(saveBtn);
+                actions.appendChild(finishBtn);
+                actions.appendChild(delBtn);
+                wrapper.appendChild(meta);
+                wrapper.appendChild(actions);
+                container.appendChild(wrapper);
+            });
+        }
+
+        document.getElementById('add-job-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value.trim();
+            if (!title) return;
+            const job = {
+                title,
+                model: document.getElementById('model').value,
+                location: document.getElementById('location').value,
+                notes: document.getElementById('notes').value,
+                status: 'queued',
+                created: Date.now()
+            };
+            const jobs = loadJobs();
+            jobs.unshift(job);
+            saveJobs(jobs);
+            renderJobs();
+            e.target.reset();
+        });
+
+        document.getElementById('clear-all-jobs').addEventListener('click', () => {
+            if (confirm('Clear all jobs?')) {
+                localStorage.removeItem('fse_jobs');
+                renderJobs();
+            }
+        });
+
+        document.getElementById('filter-status').addEventListener('change', (e) => {
+            renderJobs(e.target.value);
+        });
+
+        // initial
+        renderJobs();
+    </script>
+</body>
+
+</html>

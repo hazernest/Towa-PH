@@ -33,22 +33,8 @@
                 <h2>Kanban board</h2>
                 <p class="lede">Track jobs across New · Scheduled · Enroute · Onsite · Waiting Parts · Done.</p>
             </div>
-            <div class="grid three">
-                <article class="card compact">
-                    <div class="tag">New</div>
-                    <h3>PM – Molding</h3>
-                    <p>Assign FSE, confirm window.</p>
-                </article>
-                <article class="card compact">
-                    <div class="tag">Scheduled</div>
-                    <h3>Install – Singulation</h3>
-                    <p>10:00 AM · Laguna · FSE: TBD.</p>
-                </article>
-                <article class="card compact">
-                    <div class="tag">Waiting Parts</div>
-                    <h3>Upgrade kit</h3>
-                    <p>ETA +2 days · hold slot.</p>
-                </article>
+            <div class="kanban" id="kanban-root">
+                <!-- Kanban columns rendered by JS -->
             </div>
         </section>
 
@@ -61,10 +47,11 @@
             <div class="bar">
                 <div>
                     <h3>Pending approvals</h3>
-                    <p class="fine">3 open items: discount, rush slot, parts override.</p>
+                    <p class="fine" id="approvals-summary">Loading…</p>
                 </div>
-                <a class="btn ghost" href="#">Review</a>
+                <a class="btn ghost" href="#approvals-list" id="approvals-link">Review</a>
             </div>
+            <div id="approvals-list" style="margin-top:12px"></div>
         </section>
 
         <section class="section" id="inventory">
@@ -104,6 +91,208 @@
             </div>
         </section>
     </main>
+    <script>
+        // Admin portal functionality (local demo using localStorage)
+        const STATUSES = ['queued', 'scheduled', 'enroute', 'onsite', 'waiting parts', 'finished'];
+
+        function safeLoad(key) {
+            try {
+                return JSON.parse(localStorage.getItem(key) || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+
+        function safeSave(key, val) {
+            localStorage.setItem(key, JSON.stringify(val));
+        }
+
+        function renderKanban() {
+            const root = document.getElementById('kanban-root');
+            root.innerHTML = '';
+            const jobs = safeLoad('fse_jobs');
+            STATUSES.forEach(status => {
+                const col = document.createElement('div');
+                col.style = minColStyle();
+                const header = document.createElement('div');
+                header.className = 'card';
+                header.style.padding = '8px';
+                header.innerHTML = `<strong style="text-transform:capitalize">${status.replace(/\b\w/g,c=>c.toUpperCase())}</strong><div class="small">${jobs.filter(j=> (j.status||'queued')===status).length} items</div>`;
+                col.appendChild(header);
+                const list = document.createElement('div');
+                list.style.display = 'flex';
+                list.style.flexDirection = 'column';
+                list.style.gap = '8px';
+                list.style.marginTop = '8px';
+                jobs.filter(j => (j.status || 'queued') === status).forEach(job => {
+                    const card = document.createElement('div');
+                    card.className = 'card compact';
+                    card.innerHTML = `<div style='display:flex;justify-content:space-between;gap:8px;align-items:center'><div><strong>${job.title}</strong><div class='small'>${job.model||''} · ${job.location||''}</div></div></div>`;
+                    const actions = document.createElement('div');
+                    actions.style.marginTop = '8px';
+                    const select = document.createElement('select');
+                    STATUSES.forEach(s => {
+                        const o = document.createElement('option');
+                        o.value = s;
+                        o.textContent = s[0].toUpperCase() + s.slice(1);
+                        if (s === (job.status || 'queued')) o.selected = true;
+                        select.appendChild(o);
+                    });
+                    select.addEventListener('change', () => {
+                        const all = safeLoad('fse_jobs');
+                        const i = all.findIndex(x => x.created === job.created);
+                        if (i > -1) {
+                            all[i].status = select.value;
+                            safeSave('fse_jobs', all);
+                            renderKanban();
+                            renderApprovals();
+                            renderKPIs();
+                        }
+                    });
+                    const finishBtn = document.createElement('button');
+                    finishBtn.className = 'btn';
+                    finishBtn.textContent = 'Finish';
+                    finishBtn.style.marginLeft = '8px';
+                    finishBtn.addEventListener('click', () => {
+                        if (confirm('Mark job finished?')) {
+                            const all = safeLoad('fse_jobs');
+                            const i = all.findIndex(x => x.created === job.created);
+                            if (i > -1) {
+                                all[i].status = 'finished';
+                                safeSave('fse_jobs', all);
+                                renderKanban();
+                                renderKPIs();
+                            }
+                        }
+                    });
+                    const del = document.createElement('button');
+                    del.className = 'btn ghost';
+                    del.textContent = 'Delete';
+                    del.style.marginLeft = '8px';
+                    del.addEventListener('click', () => {
+                        if (confirm('Delete job?')) {
+                            const all = safeLoad('fse_jobs');
+                            const i = all.findIndex(x => x.created === job.created);
+                            if (i > -1) {
+                                all.splice(i, 1);
+                                safeSave('fse_jobs', all);
+                                renderKanban();
+                                renderKPIs();
+                            }
+                        }
+                    });
+                    actions.appendChild(select);
+                    actions.appendChild(finishBtn);
+                    actions.appendChild(del);
+                    card.appendChild(actions);
+                    list.appendChild(card);
+                });
+                col.appendChild(list);
+                root.appendChild(col);
+            });
+        }
+
+        function minColStyle() {
+            return 'display:flex;flex-direction:column;gap:8px;'
+        }
+
+        function renderApprovals() {
+            const out = document.getElementById('approvals-list');
+            out.innerHTML = '';
+            const reqs = safeLoad('access_requests');
+            document.getElementById('approvals-summary').textContent = `${reqs.length} open requests`;
+            if (!reqs.length) {
+                out.innerHTML = '<div class="small">No pending access requests.</div>';
+                return
+            }
+            reqs.forEach((r, idx) => {
+                const c = document.createElement('div');
+                c.className = 'card';
+                c.innerHTML = `<strong>${r.email}</strong><div class='small'>Role: ${r.role||'user'}</div><div class='small'>Message: ${r.message||''}</div>`;
+                const actions = document.createElement('div');
+                actions.className = 'card-ctas';
+                const approve = document.createElement('button');
+                approve.className = 'btn';
+                approve.textContent = 'Approve';
+                approve.addEventListener('click', () => {
+                    const users = safeLoad('portal_users');
+                    users.push({
+                        email: r.email,
+                        role: r.role || 'customer',
+                        approved: true
+                    });
+                    safeSave('portal_users', users);
+                    reqs.splice(idx, 1);
+                    safeSave('access_requests', reqs);
+                    renderApprovals();
+                    alert('Approved ' + r.email);
+                });
+                const reject = document.createElement('button');
+                reject.className = 'btn ghost';
+                reject.textContent = 'Reject';
+                reject.addEventListener('click', () => {
+                    if (confirm('Reject request?')) {
+                        reqs.splice(idx, 1);
+                        safeSave('access_requests', reqs);
+                        renderApprovals();
+                    }
+                });
+                actions.appendChild(approve);
+                actions.appendChild(reject);
+                c.appendChild(actions);
+                out.appendChild(c);
+            });
+        }
+
+        function renderInventory() {
+            const jobs = safeLoad('fse_jobs');
+            const reports = safeLoad('fse_reports');
+            const punch = safeLoad('fse_attendance');
+            // example: count finished vs open
+            const open = jobs.filter(j => (j.status || 'queued') !== 'finished').length;
+            const finished = jobs.filter(j => (j.status || 'queued') === 'finished').length;
+            const invSection = document.querySelector('#inventory .grid');
+            // update first card content
+            if (invSection && invSection.children[0]) {
+                invSection.children[0].querySelector('p').textContent = `Open: ${open} · Finished: ${finished}`;
+            }
+            if (invSection && invSection.children[1]) {
+                invSection.children[1].querySelector('p').textContent = `Reports: ${reports.length} · Punches: ${punch.length}`;
+            }
+        }
+
+        function renderKPIs() {
+            const jobs = safeLoad('fse_jobs');
+            const total = jobs.length;
+            const finished = jobs.filter(j => (j.status || 'queued') === 'finished').length;
+            const backlog = jobs.filter(j => (j.status || 'queued') !== 'finished').length;
+            const kpiSection = document.querySelector('#kpi .grid');
+            if (kpiSection && kpiSection.children[0]) kpiSection.children[0].querySelector('p').textContent = `Jobs total: ${total}`;
+            if (kpiSection && kpiSection.children[1]) kpiSection.children[1].querySelector('p').textContent = `Backlog: ${backlog} · Finished: ${finished}`;
+        }
+
+        // storage change listener to keep admin in sync
+        window.addEventListener('storage', (e) => {
+            if (['fse_jobs', 'fse_reports', 'fse_attendance', 'access_requests', 'portal_users'].includes(e.key)) {
+                renderKanban();
+                renderApprovals();
+                renderInventory();
+                renderKPIs();
+            }
+        });
+
+        // init
+        renderKanban();
+        renderApprovals();
+        renderInventory();
+        renderKPIs();
+
+        // expose small helper for testing
+        window._admin = {
+            renderKanban,
+            renderApprovals
+        };
+    </script>
 </body>
 
 </html>

@@ -16,95 +16,327 @@
         </div>
         <nav class="nav">
             <a href="index.html">Home</a>
-            <a href="#jobs">Jobs</a>
-            <a href="#schedule">Schedule</a>
-            <a href="#parts">Parts</a>
-            <a href="#reports">Reports</a>
+            <a href="customer.html">Customer</a>
+            <a href="admin.html">Admin</a>
         </nav>
         <div class="cta-row">
-            <a class="btn" href="index.html#portals">Back to Site</a>
+            <button id="signout" class="btn ghost">Sign out</button>
         </div>
     </header>
 
     <main>
-        <section class="section" id="jobs">
-            <div class="section-header">
-                <p class="eyebrow">FSE</p>
-                <h2>My jobs today</h2>
-                <p class="lede">Prioritized tickets with status and site notes. Sign in to sync your queue.</p>
-            </div>
-            <div class="grid three">
-                <article class="card compact">
-                    <div class="tag">Scheduled</div>
-                    <h3>Install – Molding Line</h3>
-                    <p>Site: Laguna Tech Park · 10:00 AM</p>
-                    <p class="fine">Pre-checklist: tools, EHS brief, transfer set.</p>
-                </article>
-                <article class="card compact">
-                    <div class="tag">Enroute</div>
-                    <h3>PM – Singulation</h3>
-                    <p>Site: Cavite Fab · 1:30 PM</p>
-                    <p class="fine">Parts reserved: blade set, filters.</p>
-                </article>
-                <article class="card compact">
-                    <div class="tag">Waiting Parts</div>
-                    <h3>Upgrade – Compression</h3>
-                    <p>Site: Sta. Rosa · TBD</p>
-                    <p class="fine">Kits in transit. Hold slot pending ETA.</p>
-                </article>
-            </div>
-        </section>
-
-        <section class="section muted" id="schedule">
-            <div class="section-header">
-                <p class="eyebrow">Schedule</p>
-                <h2>Calendar & dispatch board</h2>
-                <p class="lede">Map, calendar, and shift view. Sign in to see assigned routes.</p>
-            </div>
-            <div class="bar">
-                <div>
-                    <h3>Today</h3>
-                    <p class="fine">2 onsite, 1 standby. Travel windows locked.</p>
+        <div class="dashboard">
+            <aside class="sidebar">
+                <div class="card">
+                    <h3>My Profile</h3>
+                    <div id="user-info" class="small">Not signed in</div>
+                    <div id="attendance-status" class="small" style="margin-top:6px">No attendance recorded</div>
                 </div>
-                <a class="btn ghost" href="#">Open calendar</a>
-            </div>
-        </section>
-
-        <section class="section" id="parts">
-            <div class="section-header">
-                <p class="eyebrow">Parts</p>
-                <h2>Parts holds & checklists</h2>
-                <p class="lede">Reserve critical spares per job and confirm compatibility.</p>
-            </div>
-            <div class="grid two">
-                <article class="card compact">
-                    <h3>Parts on hold</h3>
-                    <p>Blade set · Filters · Sensor kit</p>
-                    <p class="fine">Auto-release after visit completion.</p>
-                </article>
-                <article class="card compact">
-                    <h3>Pre-visit checklist</h3>
-                    <p>Tools, EHS, transfer set, camera for reports.</p>
-                    <p class="fine">Download SOP and safety notes.</p>
-                </article>
-            </div>
-        </section>
-
-        <section class="section muted" id="reports">
-            <div class="section-header">
-                <p class="eyebrow">Reports</p>
-                <h2>Upload photos and sign-off</h2>
-                <p class="lede">Collect evidence, parts used, and customer sign-off after each visit.</p>
-            </div>
-            <div class="bar">
-                <div>
-                    <h3>After-action</h3>
-                    <p class="fine">Attach photos, notes, and customer signature. Auto-share with dispatcher.</p>
+                <div class="card">
+                    <h4>Quick Actions</h4>
+                    <div class="card-ctas">
+                        <a class="btn" href="fse-jobs.html">Jobs</a>
+                        <button id="time-in" class="btn">Time In</button>
+                        <button id="time-out" class="btn ghost">Time Out</button>
+                        <a class="btn" href="fse-attendance.html">Attendance</a>
+                        <a class="btn" href="fse-reports.html">Add FSE Report</a>
+                        <a class="btn ghost" href="fse-reports.html">All FSE Reports</a>
+                        <a class="btn ghost" href="index.html#contact">Request Access</a>
+                    </div>
                 </div>
-                <a class="btn" href="#">Upload report</a>
-            </div>
-        </section>
+                <div class="card">
+                    <h4>Today</h4>
+                    <p class="small">2 onsite · 1 standby</p>
+                    <p class="small">Travel windows locked</p>
+                </div>
+            </aside>
+
+            <section class="main">
+                <div class="card">
+                    <div class="section-header">
+                        <p class="eyebrow">FSE</p>
+                        <h2>Dashboard</h2>
+                        <p class="lede">Synchronized with server when signed in. Demo stores locally.</p>
+                    </div>
+                    <div id="summary-row" style="display:flex;gap:12px;align-items:center;margin:12px 0">
+                        <div class="chip" id="summary-jobs">Jobs: 0</div>
+                        <div class="chip" id="summary-reports">Reports: 0</div>
+                        <div class="chip" id="summary-punches">Punches: 0</div>
+                        <div style="margin-left:auto" id="current-status" class="small">Status: Out</div>
+                    </div>
+                    <div id="job-list" class="job-list" aria-live="polite"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Add / Manage Job</h3>
+                    <form id="job-form" class="quick-form">
+                        <label for="jtitle">Title</label>
+                        <input id="jtitle" name="title" required>
+                        <label for="jmodel">Model / SN</label>
+                        <input id="jmodel" name="model">
+                        <label for="jlocation">Site / ETA</label>
+                        <input id="jlocation" name="location">
+                        <label for="jnotes">Notes</label>
+                        <textarea id="jnotes" name="notes" rows="3"></textarea>
+                        <div style="display:flex;gap:8px;margin-top:8px">
+                            <button class="btn" type="submit">Add Job</button>
+                            <button id="clear-jobs" type="button" class="btn ghost">Clear All</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- After-Action / Photos moved to dedicated FSE Reports page -->
+            </section>
+        </div>
     </main>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        const CHECK_ACCESS = '/.netlify/functions/check-access';
+
+        function decodeJwt(token) {
+            try {
+                const p = token.split('.')[1];
+                return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/')))
+            } catch (e) {
+                return {}
+            }
+        }
+
+        async function checkAccess(email) {
+            try {
+                const res = await fetch(CHECK_ACCESS + '?email=' + encodeURIComponent(email));
+                if (!res.ok) return null;
+                return await res.json();
+            } catch (e) {
+                return null
+            }
+        }
+
+        function renderUser(claims) {
+            const el = document.getElementById('user-info');
+            if (!el) return;
+            if (!claims) return el.textContent = 'Not signed in';
+            el.textContent = `${claims.name || claims.email || claims.sub}`;
+        }
+
+        // Storage helpers
+        function loadJobs() {
+            try {
+                return JSON.parse(localStorage.getItem('fse_jobs') || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+
+        function saveJobs(j) {
+            localStorage.setItem('fse_jobs', JSON.stringify(j))
+        }
+
+        function loadReports() {
+            try {
+                return JSON.parse(localStorage.getItem('fse_reports') || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+
+        function saveReports(r) {
+            localStorage.setItem('fse_reports', JSON.stringify(r))
+        }
+
+        function loadAttendance() {
+            try {
+                return JSON.parse(localStorage.getItem('fse_attendance') || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+
+        function saveAttendance(a) {
+            localStorage.setItem('fse_attendance', JSON.stringify(a))
+        }
+
+        // Summary and attendance
+        function renderAttendanceStatus() {
+            const el = document.getElementById('attendance-status');
+            if (!el) return;
+            const arr = loadAttendance();
+            if (!arr.length) {
+                el.textContent = 'No attendance recorded';
+                return
+            }
+            const last = arr[arr.length - 1];
+            const t = new Date(last.time).toLocaleString();
+            el.textContent = `Last: ${last.type === 'in' ? 'Time In' : 'Time Out'} — ${t}`;
+        }
+
+        function updateSummary() {
+            const jobs = loadJobs();
+            const reports = loadReports();
+            const punches = loadAttendance();
+            const sj = document.getElementById('summary-jobs');
+            if (sj) sj.textContent = `Jobs: ${jobs.length}`;
+            const sr = document.getElementById('summary-reports');
+            if (sr) sr.textContent = `Reports: ${reports.length}`;
+            const sp = document.getElementById('summary-punches');
+            if (sp) sp.textContent = `Punches: ${punches.length}`;
+            const cs = document.getElementById('current-status');
+            if (cs) cs.textContent = `Status: ${punches.length ? (punches[punches.length-1].type==='in'?'In':'Out') : 'Out'}`;
+            renderAttendanceStatus();
+            // enable/disable buttons
+            const timeInBtn = document.getElementById('time-in');
+            const timeOutBtn = document.getElementById('time-out');
+            if (!timeInBtn || !timeOutBtn) return;
+            const last = punches.length ? punches[punches.length - 1].type : 'out';
+            if (last === 'in') {
+                timeInBtn.disabled = true;
+                timeOutBtn.disabled = false;
+            } else {
+                timeInBtn.disabled = false;
+                timeOutBtn.disabled = true;
+            }
+        }
+
+        function renderJobs() {
+            const list = document.getElementById('job-list');
+            if (!list) return;
+            const jobs = loadJobs();
+            list.innerHTML = '';
+            if (!jobs.length) {
+                list.innerHTML = '<div class="small">No jobs in queue. Add one with the form.</div>';
+                return
+            }
+            jobs.forEach((job, idx) => {
+                const card = document.createElement('div');
+                card.className = 'job-card';
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                const status = job.status ? ` · ${job.status}` : '';
+                meta.innerHTML = `<strong>${job.title}</strong><div class="small">${job.model||''} · ${job.location||''}${status}</div>`;
+                const actions = document.createElement('div');
+                actions.className = 'actions';
+                const doneBtn = document.createElement('button');
+                doneBtn.className = 'btn ghost';
+                doneBtn.textContent = job.done ? 'Done' : 'Mark';
+                doneBtn.disabled = !!job.finished;
+                doneBtn.addEventListener('click', () => {
+                    const j = loadJobs();
+                    j[idx].done = !j[idx].done;
+                    saveJobs(j);
+                    renderJobs();
+                    updateSummary();
+                });
+                const open = document.createElement('button');
+                open.className = 'btn';
+                open.textContent = 'Open';
+                open.addEventListener('click', () => {
+                    alert('Job details:\n' + (job.notes || 'No notes'))
+                });
+                actions.appendChild(doneBtn);
+                actions.appendChild(open);
+                card.appendChild(meta);
+                card.appendChild(actions);
+                list.appendChild(card);
+            });
+        }
+
+        function punch(type) {
+            const timeInBtn = document.getElementById('time-in');
+            const timeOutBtn = document.getElementById('time-out');
+            if (type === 'in' && timeInBtn) timeInBtn.disabled = true;
+            if (type === 'out' && timeOutBtn) timeOutBtn.disabled = true;
+            const arr = loadAttendance();
+            const existingToken = localStorage.getItem('google_id_token');
+            let user = null;
+            if (existingToken) {
+                try {
+                    user = decodeJwt(existingToken).email || decodeJwt(existingToken).sub
+                } catch (e) {}
+            }
+            arr.push({
+                type,
+                time: Date.now(),
+                user
+            });
+            saveAttendance(arr);
+            updateSummary();
+        }
+
+        // DOM event wiring
+        window.addEventListener('load', async() => {
+            const existing = localStorage.getItem('google_id_token');
+            if (!existing) {
+                renderUser(null);
+                const jl = document.getElementById('job-list');
+                if (jl) jl.innerHTML = '<div class="small">Please sign in from the main site to access this portal.</div>';
+                return
+            }
+            const claims = decodeJwt(existing);
+            renderUser(claims);
+            const access = await checkAccess(claims.email || claims.sub || '');
+            if (!access || !access.approved || (access.role && access.role.toLowerCase() !== 'fse')) {
+                const jl = document.getElementById('job-list');
+                if (jl) jl.innerHTML = '<div class="small">Access not approved for this portal. Request access from the main site.</div>';
+                return
+            }
+            renderJobs();
+            updateSummary();
+        });
+
+        const jobForm = document.getElementById('job-form');
+        if (jobForm) jobForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('jtitle').value.trim();
+            if (!title) return;
+            const job = {
+                title,
+                model: document.getElementById('jmodel').value,
+                location: document.getElementById('jlocation').value,
+                notes: document.getElementById('jnotes').value,
+                done: false,
+                created: Date.now()
+            };
+            const jobs = loadJobs();
+            jobs.unshift(job);
+            saveJobs(jobs);
+            renderJobs();
+            updateSummary();
+            e.target.reset();
+        });
+
+        const clearJobsBtn = document.getElementById('clear-jobs');
+        if (clearJobsBtn) clearJobsBtn.addEventListener('click', () => {
+            if (confirm('Clear all demo jobs?')) {
+                localStorage.removeItem('fse_jobs');
+                renderJobs();
+                updateSummary();
+            }
+        });
+
+        const newJobBtn = document.getElementById('new-job-btn');
+        if (newJobBtn) newJobBtn.addEventListener('click', () => {
+            const jtitle = document.getElementById('jtitle');
+            if (jtitle) jtitle.focus();
+        });
+
+        const signoutBtn = document.getElementById('signout');
+        if (signoutBtn) signoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('google_id_token');
+            renderUser(null);
+            const jl = document.getElementById('job-list');
+            if (jl) jl.innerHTML = '<div class="small">Signed out. Please sign in from the main site.</div>';
+        });
+
+        const timeInBtn = document.getElementById('time-in');
+        if (timeInBtn) timeInBtn.addEventListener('click', () => {
+            punch('in');
+        });
+        const timeOutBtn = document.getElementById('time-out');
+        if (timeOutBtn) timeOutBtn.addEventListener('click', () => {
+            punch('out');
+        });
+    </script>
 </body>
 
 </html>

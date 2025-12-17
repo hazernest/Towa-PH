@@ -438,3 +438,281 @@ textarea:focus {
         align-items: flex-start;
     }
 }
+
+
+/* FSE dashboard styles */
+
+.dashboard {
+    max-width: var(--max-width);
+    margin: 24px auto 80px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+}
+
+.dashboard .sidebar {
+    position: sticky;
+    top: 86px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dashboard .sidebar .card {
+    padding: 14px;
+}
+
+.dashboard .main {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.job-list {
+    display: grid;
+    gap: 12px;
+}
+
+.job-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, #fff, var(--card-strong));
+}
+
+.job-card .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.job-card .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.small {
+    font-size: 13px;
+    color: var(--text-dim)
+}
+
+.chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(2, 67, 151, 0.06);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap
+}
+
+.thumbs img {
+    width: 80px;
+    border-radius: 6px;
+    border: 1px solid var(--border)
+}
+
+@media (max-width: 900px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        padding: 0 12px
+    }
+    .dashboard .sidebar {
+        position: static
+    }
+}
+
+
+/* Attendance / calendar */
+
+.calendar-card {
+    padding: 12px
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px
+}
+
+.calendar th,
+.calendar td {
+    border: 1px solid var(--border);
+    padding: 8px;
+    vertical-align: top;
+    height: 90px
+}
+
+.calendar th {
+    background: var(--card-strong);
+    color: var(--accent);
+    font-weight: 700
+}
+
+.day-number {
+    font-weight: 700;
+    margin-bottom: 6px
+}
+
+.calendar .event {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 2px 0
+}
+
+.attendance-bubble {
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background: rgba(2, 67, 151, 0.08);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: 6px
+}
+
+@media (max-width:600px) {
+    .calendar th,
+    .calendar td {
+        height: 70px;
+        padding: 6px;
+        font-size: 12px
+    }
+    /* Modal for +more details */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 20, 40, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 60;
+    }
+    .modal {
+        background: var(--card);
+        border-radius: 10px;
+        padding: 18px;
+        max-width: 720px;
+        width: 92%;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+    .modal h3 {
+        margin-top: 0;
+    }
+    .modal .event-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--border);
+    }
+    .modal .close {
+        margin-left: auto;
+        background: transparent;
+        border: 0;
+        color: var(--accent);
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .more-bubble {
+        cursor: pointer;
+    }
+    .hidden {
+        display: none;
+    }
+    /* Admin / Kanban styles */
+    .kanban {
+        max-width: var(--max-width);
+        margin: 18px auto;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        align-items: start
+    }
+    .kanban-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px
+    }
+    .kanban-header {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        font-weight: 700
+    }
+    .kanban-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px
+    }
+    .kanban .card.compact {
+        padding: 10px
+    }
+    .kanban .card.compact .tag {
+        display: block;
+        margin-bottom: 6px
+    }
+    .kanban .card.compact .small {
+        font-size: 12px
+    }
+    /* Approvals list */
+    #approvals-list .card {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px
+    }
+    #approvals-list .card .card-ctas {
+        display: flex;
+        gap: 8px
+    }
+    /* Inventory + KPI layout tweaks */
+    #inventory .grid.two {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap
+    }
+    #kpi .grid.two {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap
+    }
+    /* Responsive rules */
+    @media (max-width: 1100px) {
+        .kanban {
+            grid-template-columns: repeat(3, 1fr)
+        }
+    }
+    @media (max-width: 760px) {
+        .kanban {
+            grid-template-columns: repeat(1, 1fr);
+            padding: 0 12px
+        }
+        .kanban-header {
+            text-align: left
+        }
+        #inventory .grid.two,
+        #kpi .grid.two {
+            flex-direction: column
+        }
+    }
+}
