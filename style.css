@@ -22,6 +22,44 @@
     padding: 0;
 }
 
+.admin-hero {
+    background: linear-gradient(135deg, rgba(2, 67, 151, 0.08), rgba(58, 127, 247, 0.08));
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    max-width: var(--max-width);
+    margin: 0 auto 40px;
+    box-shadow: 0 20px 45px rgba(0, 25, 80, 0.07);
+}
+
+.admin-hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    border: 1px solid rgba(3, 58, 115, 0.12);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 10px 30px rgba(2, 67, 151, 0.1);
+}
+
+.stat-card h3 {
+    font-size: clamp(28px, 4vw, 36px);
+    margin: 0;
+    color: var(--accent);
+}
+
+.stat-card .small {
+    color: var(--text);
+}
+
 body {
     margin: 0;
     background: radial-gradient(circle at 20% 10%, rgba(2, 67, 151, 0.07), transparent 32%), radial-gradient(circle at 80% 0%, rgba(58, 127, 247, 0.08), transparent 28%), var(--bg);
@@ -359,6 +397,71 @@ textarea:focus {
     margin-top: 6px;
 }
 
+.kanban {
+    max-width: var(--max-width);
+    margin: 18px auto 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    align-items: start;
+    padding: 0 4px;
+}
+
+.kanban-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.kanban-header {
+    background: linear-gradient(180deg, rgba(2, 67, 151, 0.08), rgba(255, 255, 255, 0.8));
+    border: 1px solid rgba(3, 58, 115, 0.24);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--text);
+    box-shadow: 0 15px 30px rgba(2, 67, 151, 0.08);
+}
+
+.kanban-header .small {
+    margin-top: 6px;
+    color: var(--text-dim);
+}
+
+.kanban-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 80px;
+    padding-bottom: 10px;
+}
+
+.kanban-task {
+    border-radius: 14px;
+    border: 1px solid rgba(3, 58, 115, 0.16);
+    padding: 14px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kanban-task:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 25px 45px rgba(0, 25, 80, 0.12);
+}
+
+.kanban-task .card-ctas {
+    justify-content: flex-end;
+}
+
+.kanban-task select {
+    border-radius: 8px;
+    border: 1px solid rgba(3, 58, 115, 0.18);
+    padding: 6px 8px;
+}
+
 .bar {
     margin-top: 18px;
     border: 1px solid var(--border);
@@ -637,43 +740,6 @@ textarea:focus {
     .hidden {
         display: none;
     }
-    /* Admin / Kanban styles */
-    .kanban {
-        max-width: var(--max-width);
-        margin: 18px auto;
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 12px;
-        align-items: start
-    }
-    .kanban-col {
-        display: flex;
-        flex-direction: column;
-        gap: 10px
-    }
-    .kanban-header {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px;
-        text-align: center;
-        font-weight: 700
-    }
-    .kanban-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px
-    }
-    .kanban .card.compact {
-        padding: 10px
-    }
-    .kanban .card.compact .tag {
-        display: block;
-        margin-bottom: 6px
-    }
-    .kanban .card.compact .small {
-        font-size: 12px
-    }
     /* Approvals list */
     #approvals-list .card {
         display: flex;
@@ -696,23 +762,24 @@ textarea:focus {
         gap: 12px;
         flex-wrap: wrap
     }
-    /* Responsive rules */
-    @media (max-width: 1100px) {
-        .kanban {
-            grid-template-columns: repeat(3, 1fr)
-        }
+}
+
+@media (max-width: 1100px) {
+    .kanban {
+        grid-template-columns: repeat(3, 1fr);
     }
-    @media (max-width: 760px) {
-        .kanban {
-            grid-template-columns: repeat(1, 1fr);
-            padding: 0 12px
-        }
-        .kanban-header {
-            text-align: left
-        }
-        #inventory .grid.two,
-        #kpi .grid.two {
-            flex-direction: column
-        }
+}
+
+@media (max-width: 760px) {
+    .kanban {
+        grid-template-columns: repeat(1, 1fr);
+        padding: 0 12px;
+    }
+    .kanban-header {
+        text-align: left;
+    }
+    #inventory .grid.two,
+    #kpi .grid.two {
+        flex-direction: column;
     }
 }
