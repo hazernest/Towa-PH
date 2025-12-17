@@ -22,6 +22,44 @@
     padding: 0;
 }
 
+.admin-hero {
+    background: linear-gradient(135deg, rgba(2, 67, 151, 0.08), rgba(58, 127, 247, 0.08));
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    max-width: var(--max-width);
+    margin: 0 auto 40px;
+    box-shadow: 0 20px 45px rgba(0, 25, 80, 0.07);
+}
+
+.admin-hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    border: 1px solid rgba(3, 58, 115, 0.12);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 10px 30px rgba(2, 67, 151, 0.1);
+}
+
+.stat-card h3 {
+    font-size: clamp(28px, 4vw, 36px);
+    margin: 0;
+    color: var(--accent);
+}
+
+.stat-card .small {
+    color: var(--text);
+}
+
 body {
     margin: 0;
     background: radial-gradient(circle at 20% 10%, rgba(2, 67, 151, 0.07), transparent 32%), radial-gradient(circle at 80% 0%, rgba(58, 127, 247, 0.08), transparent 28%), var(--bg);
@@ -371,6 +409,71 @@ textarea:focus {
     margin-top: 6px;
 }
 
+.kanban {
+    max-width: var(--max-width);
+    margin: 18px auto 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    align-items: start;
+    padding: 0 4px;
+}
+
+.kanban-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.kanban-header {
+    background: linear-gradient(180deg, rgba(2, 67, 151, 0.08), rgba(255, 255, 255, 0.8));
+    border: 1px solid rgba(3, 58, 115, 0.24);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--text);
+    box-shadow: 0 15px 30px rgba(2, 67, 151, 0.08);
+}
+
+.kanban-header .small {
+    margin-top: 6px;
+    color: var(--text-dim);
+}
+
+.kanban-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 80px;
+    padding-bottom: 10px;
+}
+
+.kanban-task {
+    border-radius: 14px;
+    border: 1px solid rgba(3, 58, 115, 0.16);
+    padding: 14px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kanban-task:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 25px 45px rgba(0, 25, 80, 0.12);
+}
+
+.kanban-task .card-ctas {
+    justify-content: flex-end;
+}
+
+.kanban-task select {
+    border-radius: 8px;
+    border: 1px solid rgba(3, 58, 115, 0.18);
+    padding: 6px 8px;
+}
+
 .bar {
     margin-top: 18px;
     border: 1px solid var(--border);
@@ -448,5 +551,247 @@ textarea:focus {
     .bar {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+
+/* FSE dashboard styles */
+
+.dashboard {
+    max-width: var(--max-width);
+    margin: 24px auto 80px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+}
+
+.dashboard .sidebar {
+    position: sticky;
+    top: 86px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dashboard .sidebar .card {
+    padding: 14px;
+}
+
+.dashboard .main {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.job-list {
+    display: grid;
+    gap: 12px;
+}
+
+.job-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, #fff, var(--card-strong));
+}
+
+.job-card .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.job-card .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.small {
+    font-size: 13px;
+    color: var(--text-dim)
+}
+
+.chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(2, 67, 151, 0.06);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap
+}
+
+.thumbs img {
+    width: 80px;
+    border-radius: 6px;
+    border: 1px solid var(--border)
+}
+
+@media (max-width: 900px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        padding: 0 12px
+    }
+    .dashboard .sidebar {
+        position: static
+    }
+}
+
+
+/* Attendance / calendar */
+
+.calendar-card {
+    padding: 12px
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px
+}
+
+.calendar th,
+.calendar td {
+    border: 1px solid var(--border);
+    padding: 8px;
+    vertical-align: top;
+    height: 90px
+}
+
+.calendar th {
+    background: var(--card-strong);
+    color: var(--accent);
+    font-weight: 700
+}
+
+.day-number {
+    font-weight: 700;
+    margin-bottom: 6px
+}
+
+.calendar .event {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 2px 0
+}
+
+.attendance-bubble {
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background: rgba(2, 67, 151, 0.08);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: 6px
+}
+
+@media (max-width:600px) {
+    .calendar th,
+    .calendar td {
+        height: 70px;
+        padding: 6px;
+        font-size: 12px
+    }
+    /* Modal for +more details */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 20, 40, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 60;
+    }
+    .modal {
+        background: var(--card);
+        border-radius: 10px;
+        padding: 18px;
+        max-width: 720px;
+        width: 92%;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+    .modal h3 {
+        margin-top: 0;
+    }
+    .modal .event-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--border);
+    }
+    .modal .close {
+        margin-left: auto;
+        background: transparent;
+        border: 0;
+        color: var(--accent);
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .more-bubble {
+        cursor: pointer;
+    }
+    .hidden {
+        display: none;
+    }
+    /* Approvals list */
+    #approvals-list .card {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px
+    }
+    #approvals-list .card .card-ctas {
+        display: flex;
+        gap: 8px
+    }
+    /* Inventory + KPI layout tweaks */
+    #inventory .grid.two {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap
+    }
+    #kpi .grid.two {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap
+    }
+}
+
+@media (max-width: 1100px) {
+    .kanban {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 760px) {
+    .kanban {
+        grid-template-columns: repeat(1, 1fr);
+        padding: 0 12px;
+    }
+    .kanban-header {
+        text-align: left;
+    }
+    #inventory .grid.two,
+    #kpi .grid.two {
+        flex-direction: column;
     }
 }

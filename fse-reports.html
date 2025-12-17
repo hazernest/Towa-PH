@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSE Reports | Towa PH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/towa_logo.png" alt="TOWA Philippines" class="logo">
+            <span>FSE Reports</span>
+        </div>
+        <nav class="nav">
+            <a href="fse.html">FSE Portal</a>
+            <a href="customer.html">Customer</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+        <div class="cta-row">
+            <a class="btn ghost" href="fse.html">Back to Portal</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="section">
+            <div class="section-header">
+                <p class="eyebrow">Reports</p>
+                <h2>Add FSE Report</h2>
+                <p class="lede">Create a report with title, details, and attachments. Reports are stored locally for demo.</p>
+            </div>
+
+            <div class="grid two">
+                <div class="card">
+                    <form id="report-form" class="quick-form">
+                        <label for="rtitle">Title</label>
+                        <input id="rtitle" required>
+
+                        <label for="rdetails">Details</label>
+                        <textarea id="rdetails" rows="5"></textarea>
+
+                        <label for="rfiles">Attachments</label>
+                        <input id="rfiles" type="file" accept="image/*,.pdf,.doc,.docx" multiple>
+
+                        <div style="display:flex;gap:8px;margin-top:8px">
+                            <button class="btn" type="submit">Save Report</button>
+                            <button id="reset-reports" class="btn ghost" type="button">Clear All Reports</button>
+                        </div>
+                    </form>
+                    <div id="rthumbs" class="thumbs" style="margin-top:12px"></div>
+                </div>
+
+                <div class="card">
+                    <h3>All Reports</h3>
+                    <div id="reports-list" class="job-list"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function readFilesAsData(files) {
+            return Promise.all(Array.from(files || []).map(file => new Promise((res) => {
+                const reader = new FileReader();
+                reader.onload = () => res({
+                    name: file.name,
+                    type: file.type,
+                    data: reader.result
+                });
+                reader.readAsDataURL(file);
+            })));
+        }
+
+        function loadReports() {
+            try {
+                return JSON.parse(localStorage.getItem('fse_reports') || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+
+        function saveReports(r) {
+            localStorage.setItem('fse_reports', JSON.stringify(r))
+        }
+
+        function renderReports() {
+            const list = document.getElementById('reports-list');
+            list.innerHTML = '';
+            const reports = loadReports();
+            if (reports.length === 0) {
+                list.innerHTML = '<div class="small">No reports yet.</div>';
+                return
+            }
+            reports.slice().reverse().forEach((rep, idx) => {
+                const el = document.createElement('div');
+                el.className = 'job-card';
+                const left = document.createElement('div');
+                left.className = 'meta';
+                left.innerHTML = `<strong>${rep.title}</strong><div class="small">${new Date(rep.created).toLocaleString()}</div><div class="small">${rep.details||''}</div>`;
+                const right = document.createElement('div');
+                right.className = 'actions';
+                const view = document.createElement('button');
+                view.className = 'btn';
+                view.textContent = 'View';
+                view.addEventListener('click', () => {
+                    const win = window.open('', '_blank');
+                    win.document.write(`<h2>${rep.title}</h2><pre>${(rep.details||'')}</pre>`);
+                    if (rep.attachments && rep.attachments.length) {
+                        rep.attachments.forEach(a => {
+                            const ael = win.document.createElement('a');
+                            ael.href = a.data;
+                            ael.download = a.name;
+                            ael.textContent = '\nDownload: ' + a.name;
+                            win.document.body.appendChild(ael);
+                        });
+                    }
+                });
+                right.appendChild(view);
+                el.appendChild(left);
+                el.appendChild(right);
+                list.appendChild(el);
+            })
+        }
+
+        document.getElementById('report-form').addEventListener('submit', async(e) => {
+            e.preventDefault();
+            const title = document.getElementById('rtitle').value.trim();
+            const details = document.getElementById('rdetails').value.trim();
+            const files = document.getElementById('rfiles').files;
+            const attachments = await readFilesAsData(files);
+            const rep = {
+                title,
+                details,
+                attachments,
+                created: Date.now()
+            };
+            const reports = loadReports();
+            reports.push(rep);
+            saveReports(reports);
+            renderReports();
+            e.target.reset();
+            document.getElementById('rthumbs').innerHTML = '';
+        });
+
+        document.getElementById('rfiles').addEventListener('change', (e) => {
+            const out = document.getElementById('rthumbs');
+            out.innerHTML = '';
+            Array.from(e.target.files || []).slice(0, 8).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const r = new FileReader();
+                    r.onload = () => {
+                        const img = document.createElement('img');
+                        img.src = r.result;
+                        out.appendChild(img);
+                    };
+                    r.readAsDataURL(file);
+                } else {
+                    const badge = document.createElement('div');
+                    badge.className = 'chip';
+                    badge.textContent = file.name;
+                    out.appendChild(badge);
+                }
+            });
+        });
+
+        document.getElementById('reset-reports').addEventListener('click', () => {
+            if (confirm('Clear all stored reports?')) {
+                localStorage.removeItem('fse_reports');
+                renderReports();
+            }
+        });
+
+        // init
+        renderReports();
+    </script>
+</body>
+
+</html>

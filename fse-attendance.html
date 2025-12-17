@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>FSE Attendance | Towa PH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/towa_logo.png" alt="TOWA Philippines" class="logo">
+            <span>Attendance</span>
+        </div>
+        <nav class="nav">
+            <a href="fse.html">FSE Portal</a>
+            <a href="fse-reports.html">Reports</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+        <div class="cta-row">
+            <a class="btn ghost" href="fse.html">Back to Portal</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="section">
+            <div class="section-header">
+                <p class="eyebrow">Attendance</p>
+                <h2>FSE Activity Calendar</h2>
+                <p class="lede">Overview of time punches, job creations, and report submissions. Data is demo-local (localStorage).</p>
+            </div>
+
+            <div class="card calendar-card">
+                <div id="summary" class="small"></div>
+                <table class="calendar" id="calendar"></table>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+                <h3>Activity List</h3>
+                <div id="activity-list" class="job-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function safeParse(k) {
+            try {
+                return JSON.parse(localStorage.getItem(k) || '[]')
+            } catch (e) {
+                return []
+            }
+        }
+        const jobs = safeParse('fse_jobs');
+        const reports = safeParse('fse_reports');
+        const attendance = safeParse('fse_attendance');
+
+        // aggregate events by day (YYYY-MM-DD)
+        function dayKey(ts) {
+            const d = new Date(ts);
+            return d.toISOString().slice(0, 10)
+        }
+        const map = {};
+
+        function addEvent(date, label, type) {
+            if (!map[date]) map[date] = [];
+            map[date].push({
+                label,
+                type,
+                date
+            });
+        }
+        jobs.forEach(j => addEvent(dayKey(j.created || Date.now()), `Job: ${j.title}`, 'job'));
+        reports.forEach(r => addEvent(dayKey(r.created || Date.now()), `Report: ${r.title}`, 'report'));
+        attendance.forEach(a => addEvent(dayKey(a.time || Date.now()), `Punch: ${a.type}`, 'attendance'));
+
+        // render a simple calendar for current month
+        function renderCalendar() {
+            const cal = document.getElementById('calendar');
+            cal.innerHTML = '';
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const first = new Date(year, month, 1);
+            const startDay = first.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // header
+            const header = document.createElement('tr');
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(h => {
+                const th = document.createElement('th');
+                th.textContent = h;
+                header.appendChild(th);
+            });
+            cal.appendChild(header);
+
+            let row = document.createElement('tr');
+            for (let i = 0; i < startDay; i++) row.appendChild(document.createElement('td'));
+            for (let d = 1; d <= daysInMonth; d++) {
+                if (row.children.length === 7) {
+                    cal.appendChild(row);
+                    row = document.createElement('tr');
+                }
+                const td = document.createElement('td');
+                const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                td.innerHTML = `<div class="day-number">${d}</div>`;
+                const list = map[key] || [];
+                list.slice(0, 4).forEach(ev => {
+                    const evEl = document.createElement('div');
+                    evEl.className = 'event';
+                    evEl.textContent = ev.label;
+                    td.appendChild(evEl);
+                });
+                if (list.length > 4) {
+                    const more = document.createElement('div');
+                    more.className = 'attendance-bubble more-bubble';
+                    more.textContent = `+${list.length-4} more`;
+                    // tooltip-like peek: show first few event labels on hover via title
+                    more.title = list.slice(4, 8).map(ev => ev.label).join('\n');
+                    // store date key and attach click handler to open modal with full list
+                    more.dataset.day = key;
+                    more.addEventListener('click', (e) => {
+                        openMoreModal(key);
+                    });
+                    td.appendChild(more);
+                }
+                row.appendChild(td);
+            }
+            // fill last row
+            while (row.children.length < 7) row.appendChild(document.createElement('td'));
+            cal.appendChild(row);
+            document.getElementById('summary').textContent = `Jobs: ${jobs.length} · Reports: ${reports.length} · Punches: ${attendance.length}`;
+        }
+
+        function renderList() {
+            const out = document.getElementById('activity-list');
+            out.innerHTML = '';
+            const items = [];
+            attendance.forEach(a => items.push({
+                t: a.time,
+                text: `Punch: ${a.type}`
+            }));
+            jobs.forEach(j => items.push({
+                t: j.created,
+                text: `Job: ${j.title}`
+            }));
+            reports.forEach(r => items.push({
+                t: r.created,
+                text: `Report: ${r.title}`
+            }));
+            items.sort((a, b) => b.t - a.t);
+            if (items.length === 0) {
+                out.innerHTML = '<div class="small">No activity yet.</div>';
+                return
+            }
+            items.forEach(it => {
+                const el = document.createElement('div');
+                el.className = 'job-card';
+                const m = document.createElement('div');
+                m.className = 'meta';
+                m.innerHTML = `<div class="small">${new Date(it.t).toLocaleString()}</div><strong>${it.text}</strong>`;
+                el.appendChild(m);
+                out.appendChild(el);
+            });
+        }
+
+        // modal element for +more
+        const modalRoot = document.createElement('div');
+        modalRoot.id = 'more-modal';
+        modalRoot.className = 'modal-overlay hidden';
+        modalRoot.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div style="display:flex;align-items:center;"><h3 id="modal-title">Details</h3><button class="close" id="modal-close">Close</button></div><div id="modal-body"></div></div>`;
+        document.body.appendChild(modalRoot);
+
+        function openMoreModal(dayKey) {
+            const events = map[dayKey] || [];
+            const title = new Date(dayKey).toDateString();
+            const body = document.getElementById('modal-body');
+            const titleEl = document.getElementById('modal-title');
+            titleEl.textContent = `Events for ${title}`;
+            body.innerHTML = '';
+            events.forEach(ev => {
+                const row = document.createElement('div');
+                row.className = 'event-row';
+                const left = document.createElement('div');
+                left.textContent = ev.label;
+                const right = document.createElement('div');
+                right.textContent = ev.type;
+                row.appendChild(left);
+                row.appendChild(right);
+                body.appendChild(row);
+            });
+            modalRoot.classList.remove('hidden');
+            // close handlers
+            document.getElementById('modal-close').onclick = () => {
+                modalRoot.classList.add('hidden');
+            };
+            modalRoot.onclick = (ev) => {
+                if (ev.target === modalRoot) modalRoot.classList.add('hidden');
+            };
+        }
+
+        renderCalendar();
+        renderList();
+    </script>
+</body>
+
+</html>

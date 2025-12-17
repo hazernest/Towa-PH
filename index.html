@@ -23,8 +23,8 @@
         </nav>
         <div class="cta-row">
             <a class="btn ghost" href="#contact">Talk to PH Support</a>
-            <a class="btn" href="#portals">Log In</a>
-            <div id="google-login">
+            <!-- Removed the duplicate "Log In" link to avoid interfering with Google Sign-In -->
+            <div id="google-login" aria-live="polite">
                 <div id="google-btn"></div>
                 <div id="google-status" class="fine"></div>
             </div>
@@ -179,6 +179,9 @@
                 <article class="card compact">
                     <h3>Customer Portal</h3>
                     <p>Track tickets, quotes/POs, upcoming visits, machine registry, and reports.</p>
+                    <div class="card-ctas">
+                        <a class="btn" href="customer.html">Open Customer Portal</a>
+                    </div>
                 </article>
                 <article class="card compact">
                     <h3>FSE Portal</h3>
@@ -188,7 +191,7 @@
                 <article class="card compact">
                     <h3>Admin / Dispatch</h3>
                     <p>Kanban + calendar, region/skill routing, approvals, KPIs (MTTR, FTF).</p>
-                    <a class="btn ghost" href="admin.html">Open Admin Portal</a>
+                    <a class="btn" href="admin.html">Open Admin Portal</a>
                 </article>
             </div>
             <div class="bar">
@@ -238,9 +241,9 @@
                     <h3>Visit & Coverage</h3>
                     <p>Regional coverage with dispatch from PH hubs.</p>
                     <ul class="contact-list">
-                        <li><span>Regions:</span> Luzon, Visayas, Mindanao</li>
+                        <li><span>Regions:</span> Luzon, Visayas</li>
                         <li><span>Office:</span> Towa Semiconductor Equipment Philippines Corporation</li>
-                        <li><span>Address:</span> Add PH office address here</li>
+                        <li><span>Address:</span> 121 E Science Ave, Laguna Technopark, Biñan, Laguna</li>
                     </ul>
                 </div>
             </div>
